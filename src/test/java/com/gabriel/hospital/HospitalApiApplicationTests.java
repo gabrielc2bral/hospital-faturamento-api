@@ -1,4 +1,4 @@
-package com.gabriel.hospital.hospital_api;
+package com.gabriel.hospital;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
