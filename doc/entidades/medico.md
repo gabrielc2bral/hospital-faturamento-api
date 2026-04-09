@@ -10,7 +10,3 @@ nome - String - obrigatório\
 Especialidade - Enum - obrigatório\
 procedimentos - List<MedicoProcedimento>
 
-## Regras
-
-
-## Relacionamentos
