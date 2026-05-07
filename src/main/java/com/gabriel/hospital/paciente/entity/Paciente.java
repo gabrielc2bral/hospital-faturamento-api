@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "pacientes")
@@ -19,5 +18,6 @@ public class Paciente {
     private Long id;
     private String nomeCompleto;
     private String CPF;
+    private LocalDate dataNascimento;
     //private List<Consulta> consultas;
 }
