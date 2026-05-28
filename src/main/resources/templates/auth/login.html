@@ -10,20 +10,7 @@
 <div class="container vh-100 d-flex justify-content-center align-items-center">
     <div class="row w-100">
         <div class="col-md-6 mx-auto">
-        <form form action="/cadastro" th:object="${paciente}" method="post">
-            <div class="mb-3">
-                <label for="NomeCompleto" class="form-label">Nome completo</label>
-                <input type="text" class="form-control" id="NomeCompleto" th:field="*{nomeCompleto}" required>
-            </div>
-            <div class="mb-3">
-                <label for="dataNascimento" class="form-label">Data de nascimento</label>
-                <input type="date" class="form-control" id="dataNascimento" th:field="*{dataNascimento}" required>
-            </div>
-            <div class="mb-3">
-                <label for="cpf" class="form-label">CPF:</label>
-                <input type="text" class="form-control" id="cpf" title="Digite o CPF" placeholder="000.000.000-00" aria-describedby="cpfHelp" th:field="*{cpf}" required>
-                <div id="cpfHelp" class="form-text">Nunca compartilharemos seu cpf com ninguém.</div>
-            </div>
+        <form form action="/cadastro" th:object="${usuario}" method="post">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" aria-describedby="emailHelp" th:field="*{email}" required>
@@ -33,13 +20,29 @@
                 <label for="senha" class="form-label">Senha</label>
                 <input type="password" class="form-control" id="senha" th:field="*{senha}" required>
             </div>
-            <button type="submit" class="btn btn-primary">Cadastrar</button>
+
+            <button type="submit" class="btn btn-primary">Login</button>
         </form>
         </div>
     </div>
 </div>
 
+<script>
 
+    const input = document.getElementById("telefone");
+
+    input.addEventListener("input", (e) => {
+
+        let value = e.target.value.replace(/\D/g, "");
+
+        value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
+
+        value = value.replace(/(\d{5})(\d)/, "$1-$2");
+
+        e.target.value = value;
+    });
+
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

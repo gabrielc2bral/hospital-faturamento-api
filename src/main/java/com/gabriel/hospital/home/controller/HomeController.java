@@ -11,9 +11,5 @@ public class HomeController {
     public String home() {
         return "home/index";
     }
-    @GetMapping("/cadastro")
-    public String cadastro(Model model) {
-        model.addAttribute("paciente", new PacienteDTO());
-        return "paciente/cadastro";
-    }
+
 }
