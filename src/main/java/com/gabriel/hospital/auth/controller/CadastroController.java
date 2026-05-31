@@ -2,6 +2,7 @@ package com.gabriel.hospital.auth.controller;
 
 import com.gabriel.hospital.auth.dto.request.UserDtoRequest;
 import com.gabriel.hospital.auth.dto.request.UserEmailConfirmationDTO;
+import com.gabriel.hospital.auth.service.EmailConfirmationService;
 import com.gabriel.hospital.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -9,13 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
 public class CadastroController {
 
     private final UserService userService;
+    private final EmailConfirmationService emailConfirmationService;
 
     @GetMapping("/cadastro")
     public String cadastro(Model model){
@@ -41,7 +42,7 @@ public class CadastroController {
 
     @PostMapping("/cadastro/validar")
     public String validarCadastro(@ModelAttribute UserEmailConfirmationDTO dto) {
-        userService.validarCodigoUsuario(dto);
+        emailConfirmationService.validarCodigoUsuario(dto);
 
         return "home/index";
     }
