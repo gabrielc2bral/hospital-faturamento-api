@@ -1,13 +1,13 @@
 package com.gabriel.hospital.auth.service;
 
+import com.gabriel.hospital.auth.Events.UserCreatedEvent;
 import com.gabriel.hospital.auth.dto.request.UserEmailConfirmationDTO;
 import com.gabriel.hospital.auth.entity.User;
 import com.gabriel.hospital.auth.entity.UserEmailConfirmation;
 import com.gabriel.hospital.auth.repository.EmailConfirmationRepository;
+import com.gabriel.hospital.kafka.producer.UserProducer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,10 +18,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EmailConfirmationService {
 
     private final EmailConfirmationRepository emailConfirmationRepository;
-    private final JavaMailSender mailSender;
+    private final UserProducer userProducer;
 
 
-    public void criarUserEmailConfirmation(User user, UserEmailConfirmation confirmation){
+    public UserCreatedEvent criarUserEmailConfirmation(User user, UserEmailConfirmation confirmation){
         String code = String.valueOf(ThreadLocalRandom.current().nextInt(100000, 999999));
 
         confirmation.setCode(code);
@@ -34,24 +34,15 @@ public class EmailConfirmationService {
         confirmation.setUser(user);
 
         emailConfirmationRepository.save(confirmation);
+        return new UserCreatedEvent(user.getId(), user.getEmail(), code);
     }
 
     public void enviarEmailConfirmacao(User user){
         UserEmailConfirmation confirmation = new UserEmailConfirmation();
 
-        criarUserEmailConfirmation(user, confirmation);
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        userProducer.sendUserCreated(criarUserEmailConfirmation(user, confirmation));
 
-
-        message.setFrom("noreply@demomailtrap.co");
-        message.setTo(user.getEmail());
-
-        message.setSubject("Confirmação de cadastro");
-
-        message.setText("Seu código é: " + confirmation.getCode());
-
-        mailSender.send(message);
     }
     @Transactional
     public void validarCodigoUsuario(UserEmailConfirmationDTO dto){
