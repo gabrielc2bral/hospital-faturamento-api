@@ -1,7 +1,7 @@
 package br.com.monolithlabs.clinica.auth.service;
 
 
-import br.com.monolithlabs.clinica.auth.dto.request.UserDtoRequest;
+import br.com.monolithlabs.clinica.auth.dto.request.CadastroDtoRequest;
 import br.com.monolithlabs.clinica.auth.entity.User;
 import br.com.monolithlabs.clinica.auth.enums.UserRole;
 import br.com.monolithlabs.clinica.auth.repository.UserRepository;
@@ -16,7 +16,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailConfirmationService emailConfirmationService;
 
-    public void cadastrarUsuario(UserDtoRequest dto){
+    public void cadastrarUsuario(CadastroDtoRequest dto){
         if (userRepository.existsByEmail(dto.getEmail())) throw new RuntimeException();
         User user = new User();
 

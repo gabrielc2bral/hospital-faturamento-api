@@ -1,6 +1,6 @@
 package br.com.monolithlabs.clinica.auth.controller;
 
-import br.com.monolithlabs.clinica.auth.dto.request.UserDtoRequest;
+import br.com.monolithlabs.clinica.auth.dto.request.CadastroDtoRequest;
 import br.com.monolithlabs.clinica.auth.dto.request.UserEmailConfirmationDTO;
 import br.com.monolithlabs.clinica.auth.service.EmailConfirmationService;
 import br.com.monolithlabs.clinica.auth.service.UserService;
@@ -20,11 +20,11 @@ public class CadastroController {
 
     @GetMapping("/cadastro")
     public String cadastro(Model model){
-        model.addAttribute("usuario", new UserDtoRequest());
+        model.addAttribute("usuario", new CadastroDtoRequest());
         return "auth/cadastro_user";
     }
     @PostMapping("/cadastro")
-    public String postUser(@ModelAttribute UserDtoRequest dto) {
+    public String postUser(@ModelAttribute CadastroDtoRequest dto) {
         userService.cadastrarUsuario(dto);
 
         return "redirect:/cadastro/validar";
@@ -44,6 +44,6 @@ public class CadastroController {
     public String validarCadastro(@ModelAttribute UserEmailConfirmationDTO dto) {
         emailConfirmationService.validarCodigoUsuario(dto);
 
-        return "home/index";
+        return "redirect:/login";
     }
 }

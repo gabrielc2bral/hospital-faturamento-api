@@ -72,12 +72,13 @@ services:
     volumes:
       - kafka_data_dev_hospital:/tmp/kraft-combined-logs
   api:
-    build: .
+    build: ../Clinica
     container_name: hospital_mvc_dev
     restart: always
     depends_on:
       - postgres
       - mongo
+      - kafka
     ports:
       - "8080:8080"
     environment:
@@ -87,6 +88,28 @@ services:
       DB_PASS: ${DB_PASS}
       MONGO_URI: ${MONGO_URI}
 
+
+  email-service:
+    build:
+      context: ../emailService
+      dockerfile: Dockerfile
+
+    container_name: email_service_dev
+
+    restart: always
+
+    depends_on:
+      - kafka
+
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+
+    ports:
+      - "8081:8080"
 volumes:
   postgres_data_dev_hospital:
   mongo_data_dev_hospital:
