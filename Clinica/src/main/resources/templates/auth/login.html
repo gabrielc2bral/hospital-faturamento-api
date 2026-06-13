@@ -27,23 +27,6 @@
     </div>
 </div>
 
-<script>
-
-    const input = document.getElementById("telefone");
-
-    input.addEventListener("input", (e) => {
-
-        let value = e.target.value.replace(/\D/g, "");
-
-        value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
-
-        value = value.replace(/(\d{5})(\d)/, "$1-$2");
-
-        e.target.value = value;
-    });
-
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

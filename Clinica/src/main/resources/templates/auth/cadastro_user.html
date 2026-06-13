@@ -27,19 +27,46 @@
     </div>
 </div>
 
-<script>
+<!-- Modal -->
+<div class="modal fade" id="mensagemModal" tabindex="-1">
 
-    const input = document.getElementById("telefone");
+    <div class="modal-dialog">
 
-    input.addEventListener("input", (e) => {
+        <div class="modal-content">
 
-        let value = e.target.value.replace(/\D/g, "");
+            <div class="modal-header">
 
-        value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
+                <h5 class="modal-title">Mensagem</h5>
 
-        value = value.replace(/(\d{5})(\d)/, "$1-$2");
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                </button>
 
-        e.target.value = value;
+            </div>
+
+            <div class="modal-body">
+
+                <p th:if="${mensagemSucesso}" th:text="${mensagemSucesso}"></p>
+
+                <p th:if="${mensagemErro}" th:text="${mensagemErro}"></p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script th:if="${mensagemSucesso != null or mensagemErro != null}">
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const modal = new bootstrap.Modal(
+                document.getElementById('mensagemModal')
+        );
+
+        modal.show();
     });
 
 </script>

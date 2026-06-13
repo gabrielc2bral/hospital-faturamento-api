@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,15 +20,22 @@ public class CadastroController {
     private final EmailConfirmationService emailConfirmationService;
 
     @GetMapping("/cadastro")
-    public String cadastro(Model model){
+    public String cadastro(Model model) {
         model.addAttribute("usuario", new CadastroDtoRequest());
         return "auth/cadastro_user";
     }
-    @PostMapping("/cadastro")
-    public String postUser(@ModelAttribute CadastroDtoRequest dto) {
-        userService.cadastrarUsuario(dto);
 
-        return "redirect:/cadastro/validar";
+    @PostMapping("/cadastro")
+    public String postUser(CadastroDtoRequest dto, RedirectAttributes redirectAttributes) {
+
+        try {
+            userService.cadastrarUsuario(dto);
+            redirectAttributes.addFlashAttribute("mensagemSucesso","Usuário cadastrado com sucesso!");
+            return "redirect:/cadastro/validar";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao cadastrar usuário!");
+            return "redirect:/cadastro";
+        }
     }
 
     @GetMapping("/cadastro/validar")
