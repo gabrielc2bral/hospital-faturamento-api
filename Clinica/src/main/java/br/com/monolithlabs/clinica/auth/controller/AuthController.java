@@ -1,6 +1,7 @@
 package br.com.monolithlabs.clinica.auth.controller;
 
 import br.com.monolithlabs.clinica.auth.dto.request.CadastroDtoRequest;
+import br.com.monolithlabs.clinica.auth.dto.request.LoginDtoRequest;
 import br.com.monolithlabs.clinica.auth.dto.request.UserEmailConfirmationDTO;
 import br.com.monolithlabs.clinica.auth.service.EmailConfirmationService;
 import br.com.monolithlabs.clinica.auth.service.UserService;
@@ -10,11 +11,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@RequestMapping("/auth")
 @RequiredArgsConstructor
-public class CadastroController {
+public class AuthController {
 
     private final UserService userService;
     private final EmailConfirmationService emailConfirmationService;
@@ -30,11 +33,11 @@ public class CadastroController {
 
         try {
             userService.cadastrarUsuario(dto);
-            redirectAttributes.addFlashAttribute("mensagemSucesso","Usuário cadastrado com sucesso!");
-            return "redirect:/cadastro/validar";
+            redirectAttributes.addFlashAttribute("mensagemSucesso","Usuário cadastrado com sucesso, verifique o seu email e coloque o seu código!");
+            return "redirect:/auth/cadastro/validar";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao cadastrar usuário!");
-            return "redirect:/cadastro";
+            return "redirect:/auth/cadastro";
         }
     }
 
@@ -47,6 +50,11 @@ public class CadastroController {
 
         return "auth/validar";
     }
+    @GetMapping("/cadastro/concluir")
+    public String cadastroConcluirPage(Model model) {
+
+        return "home/adm";
+    }
 
     @PostMapping("/cadastro/validar")
     public String validarCadastro(@ModelAttribute UserEmailConfirmationDTO dto) {
@@ -54,4 +62,9 @@ public class CadastroController {
 
         return "redirect:/login";
     }
+    @GetMapping("/login")
+    public String loginPage(){
+        return "auth/login";
+    }
+
 }
