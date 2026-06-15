@@ -10,7 +10,7 @@
 <div class="container vh-100 d-flex justify-content-center align-items-center">
     <div class="row w-100">
         <div class="col-md-6 mx-auto">
-        <form form action="/cadastro" th:object="${usuario}" method="post">
+        <form form action="/auth/cadastro" th:object="${usuario}" method="post">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" aria-describedby="emailHelp" th:field="*{email}" required>

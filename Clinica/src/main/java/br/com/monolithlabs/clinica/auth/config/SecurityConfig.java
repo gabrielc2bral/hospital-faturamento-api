@@ -15,27 +15,30 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("c");
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, PendingUserFilter pendingUserFilter, CustomLoginSuccessHandler successHandler) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/cadastro/**").permitAll()
-                        .requestMatchers("/login").permitAll()
                         .requestMatchers(
                                 "/",
+                                "/auth/**",
                                 "/h2-console/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html").permitAll()
+                                "/swagger-ui.html",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/webjars/**"
+                        ).permitAll()
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/medico/**").hasRole("MEDICO")
                         .anyRequest().authenticated()
-                ).formLogin(form -> form
+                ).addFilterBefore(pendingUserFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
+                .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/home", true)
+                        .successHandler(successHandler)
                         .permitAll()
                 )
                 ;

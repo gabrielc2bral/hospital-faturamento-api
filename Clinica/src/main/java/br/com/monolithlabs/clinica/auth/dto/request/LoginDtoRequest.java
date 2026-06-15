@@ -19,11 +19,4 @@ public class LoginDtoRequest {
     @Size(min = 8, max = 255)
     private String senha;
 
-    @Override
-    public String toString() {
-        return "UserDtoRequest{" +
-                "email='" + email + '\'' +
-                ", senha='" + senha + '\'' +
-                '}';
-    }
 }
