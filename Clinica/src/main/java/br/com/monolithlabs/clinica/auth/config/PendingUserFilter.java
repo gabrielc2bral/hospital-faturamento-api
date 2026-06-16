@@ -21,15 +21,32 @@ public class PendingUserFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (auth != null && auth.isAuthenticated()){
-            boolean isPending = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PENDING"));
-            boolean isOnboardingPage = uri.startsWith("/auth/cadastro/concluir");
-
-            if (isPending && !isOnboardingPage){
+        boolean isAnonymous = auth == null || auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken;
+        if (isAnonymous) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        boolean isPending = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PENDING"));
+        boolean isPublicPage  = uri.equals("/") || uri.equals("/sobre") || uri.equals("/contato");
+        boolean isAuthPage = uri.startsWith("/auth/login") || uri.startsWith("/auth/cadastro") || uri.startsWith("/auth/cadastro/validar");
+        boolean isConcluir = uri.startsWith("/auth/cadastro/concluir");
+        if (isPending) {
+            if (isAuthPage && !isConcluir){
                 response.sendRedirect("/auth/cadastro/concluir");
                 return;
             }
+            if (isPublicPage || isConcluir || uri.equals("/logout")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            response.sendRedirect("/auth/cadastro/concluir");
+            return;
         }
+        if (isAuthPage) {
+            response.sendRedirect("/");
+            return;
+        }
+
         filterChain.doFilter(request, response);
     }
 }

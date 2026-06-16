@@ -15,14 +15,9 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         var auth = authentication.getAuthorities();
-        boolean isPending = auth.contains(new SimpleGrantedAuthority("ROLE_PENDING"));
         boolean isAdmin = auth.contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
         boolean isMedico = auth.contains(new SimpleGrantedAuthority("ROLE_MEDICO"));
 
-        if (isPending) {
-            response.sendRedirect("/auth/cadastro/concluir");
-            return;
-        }
 
         if (isAdmin) {
             response.sendRedirect("/admin/dashboard");

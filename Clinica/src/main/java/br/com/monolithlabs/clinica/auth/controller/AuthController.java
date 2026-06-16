@@ -1,7 +1,6 @@
 package br.com.monolithlabs.clinica.auth.controller;
 
 import br.com.monolithlabs.clinica.auth.dto.request.CadastroDtoRequest;
-import br.com.monolithlabs.clinica.auth.dto.request.LoginDtoRequest;
 import br.com.monolithlabs.clinica.auth.dto.request.UserEmailConfirmationDTO;
 import br.com.monolithlabs.clinica.auth.service.EmailConfirmationService;
 import br.com.monolithlabs.clinica.auth.service.UserService;
@@ -62,9 +61,6 @@ public class AuthController {
 
         return "redirect:/login";
     }
-    @GetMapping("/login")
-    public String loginPage(){
-        return "auth/login";
-    }
+
 
 }
