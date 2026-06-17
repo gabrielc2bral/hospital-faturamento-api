@@ -12,7 +12,5 @@ public class PacienteDTO {
     private String nomeCompleto;
     private String cpf;
     private LocalDate dataNascimento;
-    private String email;
-    private String senha;
 
 }

@@ -5,6 +5,7 @@ import br.com.monolithlabs.clinica.auth.dto.request.CadastroDtoRequest;
 import br.com.monolithlabs.clinica.auth.entity.User;
 import br.com.monolithlabs.clinica.auth.enums.UserRole;
 import br.com.monolithlabs.clinica.auth.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,5 +29,9 @@ public class UserService {
         userRepository.save(user);
         emailConfirmationService.enviarEmailConfirmacao(user);
     }
-
+    public void concluirCadastro(User userLogado) {
+        User user = userRepository.findByEmail(userLogado.getEmail()).orElseThrow();
+        user.setRole(UserRole.PACIENTE);
+        userRepository.save(user);
+    }
 }

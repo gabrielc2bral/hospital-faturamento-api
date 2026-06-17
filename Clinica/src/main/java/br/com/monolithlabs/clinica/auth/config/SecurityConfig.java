@@ -4,9 +4,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class SecurityConfig {
@@ -17,11 +20,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, PendingUserFilter pendingUserFilter, CustomLoginSuccessHandler successHandler) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
-                                "/auth/**",
+                                "/sobre",
+                                "/contato",
+                                "/login",
+                                "/auth/cadastro",
+                                "/auth/cadastro/validar",
                                 "/h2-console/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -40,9 +48,28 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .successHandler(successHandler)
                         .permitAll()
-                )
-                ;
+                ).logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            boolean isPending = authentication != null && authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PENDING"));
+                            String destino = isPending ? "/login?cadastroConcluido" : "/login?logout";
+                            response.sendRedirect(destino);
+                        })
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                );
 
         return http.build();
+    }
+    @Bean
+    public WebMvcConfigurer configurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addViewControllers(ViewControllerRegistry registry) {
+                registry.addViewController("/login")
+                        .setViewName("auth/login");
+            }
+        };
     }
 }

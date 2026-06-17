@@ -1,5 +1,6 @@
 package br.com.monolithlabs.clinica.paciente.entity;
 
+import br.com.monolithlabs.clinica.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,5 +20,7 @@ public class Paciente {
     private String nomeCompleto;
     private String CPF;
     private LocalDate dataNascimento;
-
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
