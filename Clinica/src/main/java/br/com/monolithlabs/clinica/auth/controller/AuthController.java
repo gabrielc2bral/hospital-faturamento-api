@@ -3,17 +3,15 @@ package br.com.monolithlabs.clinica.auth.controller;
 import br.com.monolithlabs.clinica.auth.dto.request.CadastroDtoRequest;
 import br.com.monolithlabs.clinica.auth.dto.request.UserEmailConfirmationDTO;
 import br.com.monolithlabs.clinica.auth.entity.User;
+import br.com.monolithlabs.clinica.auth.service.AuthFacade;
 import br.com.monolithlabs.clinica.auth.service.EmailConfirmationService;
 import br.com.monolithlabs.clinica.auth.service.UserService;
 import br.com.monolithlabs.clinica.paciente.dto.PacienteDTO;
-import br.com.monolithlabs.clinica.paciente.service.PacienteService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,7 +28,7 @@ public class AuthController {
 
     private final UserService userService;
     private final EmailConfirmationService emailConfirmationService;
-    private final PacienteService pacienteService;
+    private final AuthFacade authFacade;
 
     @GetMapping("/cadastro")
     public String cadastro(Model model) {
@@ -84,10 +82,7 @@ public class AuthController {
             return "auth/cadastro_concluir";
         }
         try {
-            pacienteService.concluirCadastro(dto, userLogado);
-            userService.concluirCadastro(userLogado);
-            new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-
+            authFacade.concluirCadastroFacade(dto, userLogado, request, response);
             return "redirect:/login?cadastroConcluido";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao concluir cadastro.");
