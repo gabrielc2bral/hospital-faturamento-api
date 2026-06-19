@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>Novo Médico</title>
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+
+  <style>
+    :root {
+        --ink: #1f2a24;
+        --sage: #3f6652;
+        --sage-dark: #2d4a3b;
+        --mist: #eef2ee;
+        --paper: #fbfaf7;
+        --line: #d8e0d9;
+    }
+
+    body {
+        background-color: var(--paper);
+        color: var(--ink);
+        font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+        min-height: 100vh;
+    }
+
+    .navbar {
+        background-color: var(--paper) !important;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .navbar-brand {
+        font-family: Georgia, serif;
+        font-weight: 700;
+        color: var(--sage-dark) !important;
+    }
+
+    .layout {
+        display: flex;
+        min-height: calc(100vh - 66px);
+    }
+
+    .sidebar {
+        width: 280px;
+        background: var(--mist);
+        border-right: 1px solid var(--line);
+        padding: 2rem 1rem;
+    }
+
+    .sidebar-title {
+        font-family: Georgia, serif;
+        color: var(--sage-dark);
+        margin-bottom: 2rem;
+    }
+
+    .menu-section {
+        display: block;
+        font-size: .75rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #6b7a70;
+        margin-bottom: .75rem;
+    }
+
+    .menu-link {
+        display: block;
+        text-decoration: none;
+        color: var(--ink);
+        padding: .85rem 1rem;
+        border-radius: 6px;
+        margin-bottom: .4rem;
+    }
+
+    .menu-link:hover {
+        background: white;
+        color: var(--sage-dark);
+    }
+
+    .menu-link.active {
+        background: var(--sage-dark);
+        color: white;
+    }
+
+    .content {
+        flex: 1;
+        padding: 2.5rem;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-family: Georgia, serif;
+        color: var(--sage-dark);
+        margin-bottom: .25rem;
+    }
+
+    .page-header p {
+        color: #6b7a70;
+        margin: 0;
+    }
+
+    .card-custom {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 2rem;
+        max-width: 900px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--sage-dark);
+    }
+
+    .btn-primary-custom {
+        background-color: var(--sage-dark);
+        border-color: var(--sage-dark);
+    }
+
+    .btn-primary-custom:hover {
+        background-color: var(--sage);
+        border-color: var(--sage);
+    }
+
+    .text-danger {
+        font-size: .9rem;
+    }
+
+    .info-box {
+        background-color: var(--mist);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-box strong {
+        color: var(--sage-dark);
+    }
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid px-4">
+
+    <a class="navbar-brand"
+       th:href="@{/}">
+      Hospital
+    </a>
+
+    <form th:action="@{/logout}"
+          method="post">
+
+      <button class="btn btn-outline-secondary">
+        Sair
+      </button>
+
+    </form>
+
+  </div>
+</nav>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <h4 class="sidebar-title">
+      Administração
+    </h4>
+
+    <span class="menu-section">
+            Principal
+        </span>
+
+    <a th:href="@{/admin}"
+       class="menu-link">
+      🏠 Dashboard
+    </a>
+
+    <a th:href="@{/admin/medicos}"
+       class="menu-link active">
+      👨‍⚕️ Médicos
+    </a>
+
+    <a th:href="@{/admin/especialidades}"
+       class="menu-link">
+      🩺 Especialidades
+    </a>
+
+    <a th:href="@{/admin/usuarios/pendentes}"
+       class="menu-link">
+      ⏳ Contas Pendentes
+    </a>
+
+    <span class="menu-section mt-4">
+            Operações
+        </span>
+
+    <a th:href="@{/admin/consultas}"
+       class="menu-link">
+      📅 Consultas
+    </a>
+
+    <a th:href="@{/admin/exames}"
+       class="menu-link">
+      📄 Exames
+    </a>
+
+  </aside>
+
+  <main class="content">
+
+    <div class="page-header">
+
+      <h1>Novo Médico</h1>
+
+      <p>
+        Vincule um usuário existente ao cadastro profissional do médico.
+      </p>
+
+    </div>
+
+    <div class="alert alert-danger"
+         th:if="${erroGeral}"
+         th:text="${erroGeral}">
+    </div>
+
+    <div class="card-custom">
+
+      <div class="info-box">
+
+        <strong>Importante:</strong>
+
+        O usuário informado deve existir no sistema.
+        Após o cadastro, ele será associado ao médico e poderá acessar
+        funcionalidades específicas da área médica.
+
+      </div>
+
+      <form th:action="@{/admin/medicos}"
+            th:object="${cadastroMedico}"
+            method="post">
+
+        <div class="mb-3">
+
+          <label class="form-label">
+            Nome do Médico
+          </label>
+
+          <input type="text"
+                 class="form-control"
+                 th:field="*{nome}"
+                 placeholder="Dr. João Silva">
+
+          <div class="text-danger mt-1"
+               th:if="${#fields.hasErrors('nome')}"
+               th:errors="*{nome}">
+          </div>
+
+        </div>
+
+        <div class="mb-3">
+
+          <label class="form-label">
+            Email do Usuário
+          </label>
+
+          <input type="email"
+                 class="form-control"
+                 th:field="*{email}"
+                 placeholder="medico@email.com">
+
+          <div class="text-danger mt-1"
+               th:if="${#fields.hasErrors('email')}"
+               th:errors="*{email}">
+          </div>
+
+        </div>
+
+        <div class="mb-3">
+
+          <label class="form-label">
+            CRM
+          </label>
+
+          <input type="text"
+                 class="form-control"
+                 th:field="*{crm}"
+                 placeholder="123456-PE">
+
+          <div class="text-danger mt-1"
+               th:if="${#fields.hasErrors('crm')}"
+               th:errors="*{crm}">
+          </div>
+
+        </div>
+
+        <div class="mb-4">
+
+          <label class="form-label">
+            Especialidade
+          </label>
+
+          <select class="form-select"
+                  th:field="*{especialidadeId}">
+
+            <option value="">
+              Selecione uma especialidade
+            </option>
+
+            <option th:each="especialidade : ${especialidades}"
+                    th:value="${especialidade.id}"
+                    th:text="${especialidade.nome}">
+            </option>
+
+          </select>
+
+          <div class="text-danger mt-1"
+               th:if="${#fields.hasErrors('especialidadeId')}"
+               th:errors="*{especialidadeId}">
+          </div>
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+          <button type="submit"
+                  class="btn btn-primary btn-primary-custom">
+
+            Cadastrar Médico
+
+          </button>
+
+          <a th:href="@{/admin/medicos}"
+             class="btn btn-outline-secondary">
+
+            Cancelar
+
+          </a>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

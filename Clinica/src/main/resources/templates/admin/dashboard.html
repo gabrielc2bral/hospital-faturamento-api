@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administração</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+
+    <style>
+        :root {
+            --ink: #1f2a24;
+            --sage: #3f6652;
+            --sage-dark: #2d4a3b;
+            --mist: #eef2ee;
+            --paper: #fbfaf7;
+            --line: #d8e0d9;
+        }
+
+        body {
+            background-color: var(--paper);
+            color: var(--ink);
+            font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: var(--paper) !important;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .navbar-brand {
+            font-family: Georgia, serif;
+            font-weight: 700;
+            color: var(--sage-dark) !important;
+        }
+
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 66px);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--mist);
+            border-right: 1px solid var(--line);
+            padding: 2rem 1rem;
+        }
+
+        .sidebar-title {
+            font-family: Georgia, serif;
+            color: var(--sage-dark);
+            margin-bottom: 2rem;
+        }
+
+        .menu-section {
+            display: block;
+            font-size: .75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #6b7a70;
+            margin-bottom: .75rem;
+        }
+
+        .menu-link {
+            display: block;
+            text-decoration: none;
+            color: var(--ink);
+            padding: .85rem 1rem;
+            border-radius: 6px;
+            margin-bottom: .4rem;
+        }
+
+        .menu-link:hover {
+            background: white;
+            color: var(--sage-dark);
+        }
+
+        .menu-link.active {
+            background: var(--sage-dark);
+            color: white;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2.5rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-family: Georgia, serif;
+            color: var(--sage-dark);
+            margin-bottom: .25rem;
+        }
+
+        .page-header p {
+            color: #6b7a70;
+            margin: 0;
+        }
+
+        .card-custom {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dashboard-grid {
+            padding: 1.5rem;
+        }
+
+        .dashboard-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 1.5rem;
+            height: 100%;
+            transition: .15s;
+        }
+
+        .dashboard-card:hover {
+            border-color: var(--sage);
+            transform: translateY(-2px);
+        }
+
+        .dashboard-card h5 {
+            color: var(--sage-dark);
+            margin-bottom: .75rem;
+        }
+
+        .dashboard-card p {
+            margin: 0;
+            color: #6b7a70;
+            font-size: .95rem;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid px-4">
+
+        <a class="navbar-brand" th:href="@{/}">
+            Hospital
+        </a>
+
+        <form th:action="@{/logout}" method="post">
+            <button class="btn btn-outline-secondary">
+                Sair
+            </button>
+        </form>
+
+    </div>
+</nav>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <h4 class="sidebar-title">
+            Administração
+        </h4>
+
+        <span class="menu-section">
+            Principal
+        </span>
+
+        <a th:href="@{/admin}"
+           class="menu-link active">
+            🏠 Dashboard
+        </a>
+
+        <a th:href="@{/admin/medicos}"
+           class="menu-link">
+            👨‍⚕️ Médicos
+        </a>
+
+        <a th:href="@{/admin/especialidades}"
+           class="menu-link">
+            🩺 Especialidades
+        </a>
+
+        <a th:href="@{/admin/usuarios/pendentes}"
+           class="menu-link">
+            ⏳ Contas Pendentes
+        </a>
+
+        <span class="menu-section mt-4">
+            Operações
+        </span>
+
+        <a th:href="@{/admin/consultas}"
+           class="menu-link">
+            📅 Consultas
+        </a>
+
+        <a th:href="@{/admin/exames}"
+           class="menu-link">
+            📄 Exames
+        </a>
+
+    </aside>
+
+    <main class="content">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Dashboard Administrativa</h1>
+                <p>Painel central de gerenciamento do sistema.</p>
+            </div>
+
+        </div>
+
+        <div class="card-custom">
+
+            <div class="dashboard-grid">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6 col-xl-4">
+                        <a th:href="@{/admin/medicos}"
+                           class="dashboard-card">
+
+                            <h5>👨‍⚕️ Médicos</h5>
+
+                            <p>
+                                Cadastro, edição e gerenciamento dos médicos.
+                            </p>
+
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 col-xl-4">
+                        <a th:href="@{/admin/especialidades}"
+                           class="dashboard-card">
+
+                            <h5>🩺 Especialidades</h5>
+
+                            <p>
+                                Gerencie as especialidades médicas.
+                            </p>
+
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 col-xl-4">
+                        <a th:href="@{/admin/usuarios/pendentes}"
+                           class="dashboard-card">
+
+                            <h5>⏳ Contas Pendentes</h5>
+
+                            <p>
+                                Aprove usuários e transforme-os em médicos.
+                            </p>
+
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 col-xl-4">
+                        <a th:href="@{/admin/consultas}"
+                           class="dashboard-card">
+
+                            <h5>📅 Consultas</h5>
+
+                            <p>
+                                Acompanhe consultas agendadas.
+                            </p>
+
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 col-xl-4">
+                        <a th:href="@{/admin/exames}"
+                           class="dashboard-card">
+
+                            <h5>📄 Exames</h5>
+
+                            <p>
+                                Gerencie exames e resultados.
+                            </p>
+
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
