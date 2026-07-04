@@ -41,7 +41,7 @@ public class MedicoService {
             throw new UsuarioNaoPendenteException(dto.getEmail());
         }
 
-        if (user.isEnabled()) {
+        if (!user.isEnabled()) {
             throw new UsuarioNotEnabledException(dto.getEmail());
         }
 
@@ -62,6 +62,11 @@ public class MedicoService {
     @Transactional(readOnly = true)
     public long contarPorEspecialidade(Long especialidadeId) {
         return medicoRepository.countByEspecialidadeId(especialidadeId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Medico> listarPorEspecialidade(Long especialidadeId) {
+        return medicoRepository.findByEspecialidadeId(especialidadeId);
     }
 
     @Transactional(readOnly = true)

@@ -31,8 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
-/.env.dev
-/.mvn/wrapper/maven-wrapper.properties
-/mvnw.cmd
-/mvnw
+.env.dev
+.mvn/wrapper/maven-wrapper.properties
+mvnw.cmd
+mvnw
 .env.dev

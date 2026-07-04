@@ -14,12 +14,13 @@
 
   <style>
     :root {
-        --ink: #1f2a24;
-        --sage: #3f6652;
-        --sage-dark: #2d4a3b;
-        --mist: #eef2ee;
-        --paper: #fbfaf7;
-        --line: #d8e0d9;
+        --ink: #3a3a4a;
+        --primary: #8b9aad;
+        --primary-light: #9db3c5;
+        --accent-mint: #7ecac0;
+        --mist: #f0f2f5;
+        --paper: #fafbfc;
+        --line: #d5dce5;
     }
 
     body {
@@ -30,14 +31,19 @@
     }
 
     .navbar {
-        background-color: var(--paper) !important;
+        background-color: white !important;
         border-bottom: 1px solid var(--line);
+        box-shadow: 0 1px 3px rgba(139, 154, 173, 0.04);
     }
 
     .navbar-brand {
         font-family: Georgia, serif;
         font-weight: 700;
-        color: var(--sage-dark) !important;
+        color: var(--primary) !important;
+    }
+
+    .btn-outline-secondary {
+        border-radius: 8px;
     }
 
     .layout {
@@ -54,8 +60,10 @@
 
     .sidebar-title {
         font-family: Georgia, serif;
-        color: var(--sage-dark);
+        color: var(--primary);
         margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--line);
     }
 
     .menu-section {
@@ -63,8 +71,9 @@
         font-size: .75rem;
         text-transform: uppercase;
         font-weight: 700;
-        color: #6b7a70;
+        color: #7a8a9a;
         margin-bottom: .75rem;
+        letter-spacing: 0.05em;
     }
 
     .menu-link {
@@ -72,23 +81,27 @@
         text-decoration: none;
         color: var(--ink);
         padding: .85rem 1rem;
-        border-radius: 6px;
+        border-radius: 8px;
         margin-bottom: .4rem;
+        transition: background 0.15s ease;
     }
 
     .menu-link:hover {
         background: white;
-        color: var(--sage-dark);
+        color: var(--primary);
+        box-shadow: 0 1px 3px rgba(139, 154, 173, 0.08);
     }
 
     .menu-link.active {
-        background: var(--sage-dark);
+        background: var(--primary);
         color: white;
+        box-shadow: 0 2px 6px rgba(139, 154, 173, 0.25);
     }
 
     .content {
         flex: 1;
         padding: 2.5rem;
+        background-color: var(--paper);
     }
 
     .page-header {
@@ -97,28 +110,47 @@
 
     .page-header h1 {
         font-family: Georgia, serif;
-        color: var(--sage-dark);
+        color: var(--primary);
     }
 
     .page-header p {
-        color: #6b7a70;
+        color: #7a8a9a;
     }
 
     .card-custom {
         background: white;
         border: 1px solid var(--line);
-        border-radius: 8px;
+        border-radius: 12px;
         padding: 2rem;
+        box-shadow: 0 1px 6px rgba(139, 154, 173, 0.08);
+    }
+
+    .form-control, .form-select {
+        border-color: var(--line);
+        border-radius: 8px;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--accent-mint);
+        box-shadow: 0 0 0 3px rgba(126, 202, 192, 0.15);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--primary);
     }
 
     .btn-primary-custom {
-        background-color: var(--sage-dark);
-        border-color: var(--sage-dark);
+        background-color: var(--primary);
+        border-color: var(--primary);
+        border-radius: 8px;
+        color: white;
     }
 
     .btn-primary-custom:hover {
-        background-color: var(--sage);
-        border-color: var(--sage);
+        background-color: var(--primary-light);
+        border-color: var(--primary-light);
+        color: white;
     }
 
     .info-box {
@@ -129,10 +161,23 @@
         margin-bottom: 2rem;
     }
 
+    .info-box strong {
+        color: var(--primary);
+        display: block;
+        margin-bottom: .25rem;
+    }
+
     .text-error {
-        color: #dc3545;
+        color: #c06060;
         font-size: .875rem;
         margin-top: .25rem;
+    }
+
+    .alert-danger {
+        background-color: #fdf0f0;
+        border-color: #f0cece;
+        color: #8b3030;
+        border-radius: 8px;
     }
   </style>
 </head>
@@ -312,6 +357,79 @@
 
           </a>
 
+        </div>
+
+      </form>
+
+    </div>
+
+    <div class="card-custom mt-4">
+
+      <h5 class="mb-3" style="color:var(--primary); font-family:Georgia, serif;">
+        Agenda de trabalho
+      </h5>
+
+      <div class="text-muted mb-3" th:if="${#lists.isEmpty(horarios)}">
+        Nenhum horário cadastrado ainda.
+      </div>
+
+      <table class="table" th:unless="${#lists.isEmpty(horarios)}">
+        <thead>
+          <tr>
+            <th>Dia</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="h : ${horarios}">
+            <td th:text="${diasSemanaPt.get(h.diaDaSemana)}">Segunda-feira</td>
+            <td th:text="${#temporals.format(h.horaInicio, 'HH:mm')}">08:00</td>
+            <td th:text="${#temporals.format(h.horaFim, 'HH:mm')}">11:00</td>
+            <td>
+              <form th:action="@{/admin/medicos/{id}/horarios/{hid}/remover(id=${medicoId}, hid=${h.id})}"
+                    method="post">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">Remover</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <form th:action="@{/admin/medicos/{id}/horarios(id=${medicoId})}"
+            th:object="${novoHorario}"
+            method="post"
+            class="row g-2 align-items-end">
+
+        <div class="col-md-4">
+          <label class="form-label">Dia da semana</label>
+          <select class="form-select" th:field="*{diaDaSemana}">
+            <option value="MONDAY">Segunda-feira</option>
+            <option value="TUESDAY">Terça-feira</option>
+            <option value="WEDNESDAY">Quarta-feira</option>
+            <option value="THURSDAY">Quinta-feira</option>
+            <option value="FRIDAY">Sexta-feira</option>
+            <option value="SATURDAY">Sábado</option>
+            <option value="SUNDAY">Domingo</option>
+          </select>
+          <div class="text-error" th:if="${#fields.hasErrors('diaDaSemana')}" th:errors="*{diaDaSemana}"></div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Início</label>
+          <input type="time" class="form-control" th:field="*{horaInicio}">
+          <div class="text-error" th:if="${#fields.hasErrors('horaInicio')}" th:errors="*{horaInicio}"></div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Fim</label>
+          <input type="time" class="form-control" th:field="*{horaFim}">
+          <div class="text-error" th:if="${#fields.hasErrors('horaFim')}" th:errors="*{horaFim}"></div>
+        </div>
+
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary btn-primary-custom w-100">Adicionar</button>
         </div>
 
       </form>

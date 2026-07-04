@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Consulta</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+    <style>
+        :root {
+            --ink: #3a3a4a;
+            --primary: #8b9aad;
+            --primary-light: #9db3c5;
+            --accent-mint: #7ecac0;
+            --mist: #f0f2f5;
+            --paper: #fafbfc;
+            --line: #d5dce5;
+        }
+
+        body {
+            background-color: var(--paper);
+            color: var(--ink);
+            font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: white !important;
+            border-bottom: 1px solid var(--line);
+            box-shadow: 0 1px 3px rgba(58, 58, 74, 0.04);
+        }
+
+        .navbar-brand {
+            font-family: "Georgia", serif;
+            font-weight: 700;
+            color: var(--primary) !important;
+        }
+
+        .conteudo {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+
+        .page-header h1 {
+            font-family: "Georgia", serif;
+            color: var(--primary);
+        }
+
+        .card-custom {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 1px 6px rgba(139, 154, 173, 0.08);
+        }
+
+        .form-control, .form-select {
+            border-color: var(--line);
+            border-radius: 8px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .btn-primary-custom {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            border-radius: 8px;
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+            color: white;
+        }
+
+        .horario-opcao {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: white;
+            color: var(--ink);
+            padding: 0.5rem;
+        }
+
+        .horario-opcao.selecionado {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .alert-danger {
+            background-color: #fdf0f0;
+            border-color: #f0cece;
+            color: #8b3030;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">Hospital</a>
+        <form th:action="@{/logout}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-outline-secondary">Sair</button>
+        </form>
+    </div>
+</nav>
+
+<div class="conteudo">
+
+    <div class="page-header mb-4">
+        <h1>Agendar Consulta</h1>
+        <p class="text-muted">Escolha a especialidade, o médico e um horário disponível.</p>
+    </div>
+
+    <div class="alert alert-danger" th:if="${erroGeral}" th:text="${erroGeral}"></div>
+
+    <div class="card-custom">
+
+        <form id="formAgendar" th:action="@{/paciente/consultas}" th:object="${agendarConsulta}" method="post">
+
+            <input type="hidden" th:field="*{medicoId}" id="medicoId">
+            <input type="hidden" th:field="*{horario}" id="horarioEscolhido">
+
+            <div class="mb-3">
+                <label class="form-label">Especialidade</label>
+                <select id="especialidadeId" class="form-select">
+                    <option value="">Selecione</option>
+                    <option th:each="especialidade : ${especialidades}"
+                            th:value="${especialidade.id}"
+                            th:text="${especialidade.nome}"></option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Médico</label>
+                <select id="medicoSelect" class="form-select" disabled>
+                    <option value="">Selecione a especialidade primeiro</option>
+                </select>
+                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('medicoId')}" th:errors="*{medicoId}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Data</label>
+                <input type="date" id="dataConsulta" class="form-control" th:field="*{data}" disabled>
+                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('data')}" th:errors="*{data}"></div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Horários disponíveis</label>
+                <div id="horariosDisponiveis" class="d-flex flex-wrap gap-2">
+                    <span class="text-muted">Escolha o médico e a data para ver os horários.</span>
+                </div>
+                <div class="text-danger small mt-1" th:if="${#fields.hasErrors('horario')}" th:errors="*{horario}"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-primary-custom" id="btnConfirmar" disabled>
+                Confirmar agendamento
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    const especialidadeSelect = document.getElementById('especialidadeId');
+    const medicoSelect = document.getElementById('medicoSelect');
+    const medicoIdInput = document.getElementById('medicoId');
+    const dataInput = document.getElementById('dataConsulta');
+    const horariosDiv = document.getElementById('horariosDisponiveis');
+    const horarioInput = document.getElementById('horarioEscolhido');
+    const btnConfirmar = document.getElementById('btnConfirmar');
+
+    function resetHorarios(mensagem) {
+        horarioInput.value = '';
+        btnConfirmar.disabled = true;
+        horariosDiv.innerHTML = '<span class="text-muted">' + mensagem + '</span>';
+    }
+
+    especialidadeSelect.addEventListener('change', () => {
+        const especialidadeId = especialidadeSelect.value;
+        medicoSelect.innerHTML = '<option value="">Carregando...</option>';
+        medicoSelect.disabled = true;
+        dataInput.disabled = true;
+        dataInput.value = '';
+        medicoIdInput.value = '';
+        resetHorarios('Escolha o médico e a data para ver os horários.');
+
+        if (!especialidadeId) {
+            medicoSelect.innerHTML = '<option value="">Selecione a especialidade primeiro</option>';
+            return;
+        }
+
+        fetch(`/paciente/consultas/medicos?especialidadeId=${especialidadeId}`)
+            .then(res => res.json())
+            .then(medicos => {
+                medicoSelect.innerHTML = '<option value="">Selecione</option>';
+                medicos.forEach(m => {
+                    const option = document.createElement('option');
+                    option.value = m.id;
+                    option.textContent = m.nome + ' (CRM ' + m.crm + ')';
+                    medicoSelect.appendChild(option);
+                });
+                medicoSelect.disabled = false;
+            });
+    });
+
+    medicoSelect.addEventListener('change', () => {
+        medicoIdInput.value = medicoSelect.value;
+        dataInput.disabled = !medicoSelect.value;
+        dataInput.value = '';
+        resetHorarios('Escolha a data para ver os horários.');
+    });
+
+    dataInput.addEventListener('change', () => {
+        resetHorarios('Carregando horários...');
+
+        if (!medicoSelect.value || !dataInput.value) {
+            return;
+        }
+
+        fetch(`/paciente/consultas/horarios-disponiveis?medicoId=${medicoSelect.value}&data=${dataInput.value}`)
+            .then(res => res.json())
+            .then(horarios => {
+                if (horarios.length === 0) {
+                    horariosDiv.innerHTML = '<span class="text-muted">Nenhum horário disponível nesta data.</span>';
+                    return;
+                }
+                horariosDiv.innerHTML = '';
+                horarios.forEach(h => {
+                    const botao = document.createElement('button');
+                    botao.type = 'button';
+                    botao.className = 'horario-opcao';
+                    botao.textContent = h;
+                    botao.addEventListener('click', () => {
+                        document.querySelectorAll('.horario-opcao').forEach(b => b.classList.remove('selecionado'));
+                        botao.classList.add('selecionado');
+                        horarioInput.value = h;
+                        btnConfirmar.disabled = false;
+                    });
+                    horariosDiv.appendChild(botao);
+                });
+            });
+    });
+</script>
+
+</body>
+</html>

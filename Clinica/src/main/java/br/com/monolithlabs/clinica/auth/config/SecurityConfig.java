@@ -41,6 +41,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/medico/**").hasRole("MEDICO")
+                        .requestMatchers("/paciente/**").hasRole("PACIENTE")
                         .anyRequest().authenticated()
                 ).addFilterBefore(pendingUserFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form

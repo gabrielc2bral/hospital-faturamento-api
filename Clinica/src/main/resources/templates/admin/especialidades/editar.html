@@ -10,12 +10,13 @@
 
   <style>
     :root {
-        --ink: #1f2a24;
-        --sage: #3f6652;
-        --sage-dark: #2d4a3b;
-        --mist: #eef2ee;
-        --paper: #fbfaf7;
-        --line: #d8e0d9;
+        --ink: #3a3a4a;
+        --primary: #8b9aad;
+        --primary-light: #9db3c5;
+        --accent-mint: #7ecac0;
+        --mist: #f0f2f5;
+        --paper: #fafbfc;
+        --line: #d5dce5;
     }
 
     body {
@@ -26,14 +27,19 @@
     }
 
     .navbar {
-        background-color: var(--paper) !important;
+        background-color: white !important;
         border-bottom: 1px solid var(--line);
+        box-shadow: 0 1px 3px rgba(139, 154, 173, 0.04);
     }
 
     .navbar-brand {
         font-family: Georgia, serif;
         font-weight: 700;
-        color: var(--sage-dark) !important;
+        color: var(--primary) !important;
+    }
+
+    .btn-outline-secondary {
+        border-radius: 8px;
     }
 
     .layout {
@@ -50,8 +56,10 @@
 
     .sidebar-title {
         font-family: Georgia, serif;
-        color: var(--sage-dark);
+        color: var(--primary);
         margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--line);
     }
 
     .menu-section {
@@ -59,8 +67,9 @@
         font-size: .75rem;
         text-transform: uppercase;
         font-weight: 700;
-        color: #6b7a70;
+        color: #7a8a9a;
         margin-bottom: .75rem;
+        letter-spacing: 0.05em;
     }
 
     .menu-link {
@@ -68,24 +77,28 @@
         text-decoration: none;
         color: var(--ink);
         padding: .85rem 1rem;
-        border-radius: 6px;
+        border-radius: 8px;
         margin-bottom: .4rem;
+        transition: background 0.15s ease;
     }
 
     .menu-link:hover {
         background: white;
-        color: var(--sage-dark);
+        color: var(--primary);
+        box-shadow: 0 1px 3px rgba(139, 154, 173, 0.08);
     }
 
     .menu-link.active {
-        background: var(--sage-dark);
+        background: var(--primary);
         color: white;
+        box-shadow: 0 2px 6px rgba(139, 154, 173, 0.25);
     }
 
     .content {
         flex: 1;
         padding: 2.5rem;
         max-width: 1000px;
+        background-color: var(--paper);
     }
 
     .page-header {
@@ -94,54 +107,84 @@
 
     .page-header h1 {
         font-family: Georgia, serif;
-        color: var(--sage-dark);
+        color: var(--primary);
     }
 
     .page-header p {
-        color: #6b7a70;
+        color: #7a8a9a;
         margin: 0;
     }
 
     .card-custom {
         background: white;
         border: 1px solid var(--line);
-        border-radius: 8px;
+        border-radius: 12px;
         padding: 2rem;
         margin-bottom: 1.5rem;
+        box-shadow: 0 1px 6px rgba(139, 154, 173, 0.08);
     }
 
     .info-label {
         font-size: .75rem;
         text-transform: uppercase;
         font-weight: 700;
-        color: #6b7a70;
+        color: #7a8a9a;
         margin-bottom: .25rem;
+        letter-spacing: 0.04em;
     }
 
     .info-value {
         font-size: 1.1rem;
         font-weight: 600;
-        color: var(--sage-dark);
+        color: var(--primary);
+    }
+
+    .form-control {
+        border-color: var(--line);
+        border-radius: 8px;
+    }
+
+    .form-control:focus {
+        border-color: var(--accent-mint);
+        box-shadow: 0 0 0 3px rgba(126, 202, 192, 0.15);
     }
 
     .btn-primary-custom {
-        background-color: var(--sage-dark);
-        border-color: var(--sage-dark);
+        background-color: var(--primary);
+        border-color: var(--primary);
+        border-radius: 8px;
+        color: white;
     }
 
     .btn-primary-custom:hover {
-        background-color: var(--sage);
-        border-color: var(--sage);
+        background-color: var(--primary-light);
+        border-color: var(--primary-light);
+        color: white;
     }
 
     .form-label {
         font-weight: 600;
+        color: var(--primary);
     }
 
     .validation-error {
-        color: #dc3545;
+        color: #c06060;
         margin-top: .5rem;
         font-size: .9rem;
+    }
+
+    .alert-danger {
+        background-color: #fdf0f0;
+        border-color: #f0cece;
+        color: #8b3030;
+        border-radius: 8px;
+    }
+
+    .alert-warning {
+        background-color: #fef5e0;
+        border-color: #f0d98e;
+        color: #8a6500;
+        border-radius: 8px;
     }
   </style>
 </head>

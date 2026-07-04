@@ -2,12 +2,18 @@ package br.com.monolithlabs.clinica.medico.controller;
 
 import br.com.monolithlabs.clinica.auth.exception.UsuarioNotEnabledException;
 import br.com.monolithlabs.clinica.medico.dto.request.AtualizarMedicoRequest;
+import br.com.monolithlabs.clinica.medico.dto.request.CadastroHorarioTrabalhoRequest;
 import br.com.monolithlabs.clinica.medico.dto.request.CadastroMedicoRequest;
 import br.com.monolithlabs.clinica.medico.entity.Medico;
 import br.com.monolithlabs.clinica.medico.exception.EspecialidadeNaoEncontradaException;
+import br.com.monolithlabs.clinica.medico.exception.HorarioInvalidoException;
+import br.com.monolithlabs.clinica.medico.exception.HorarioNaoEncontradoException;
+import br.com.monolithlabs.clinica.medico.exception.HorarioSobrepostoException;
 import br.com.monolithlabs.clinica.auth.exception.UsuarioNaoEncontradoException;
 import br.com.monolithlabs.clinica.auth.exception.UsuarioNaoPendenteException;
+import br.com.monolithlabs.clinica.medico.exception.MedicoNaoEncontradoException;
 import br.com.monolithlabs.clinica.medico.service.EspecialidadeService;
+import br.com.monolithlabs.clinica.medico.service.HorarioTrabalhoMedicoService;
 import br.com.monolithlabs.clinica.medico.service.MedicoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +25,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.DayOfWeek;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Slf4j
 @Controller
 @RequestMapping("/admin/medicos")
@@ -26,8 +36,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class MedicoController {
 
+    private static final Map<DayOfWeek, String> DIAS_SEMANA_PT = new LinkedHashMap<>();
+    static {
+        DIAS_SEMANA_PT.put(DayOfWeek.MONDAY, "Segunda-feira");
+        DIAS_SEMANA_PT.put(DayOfWeek.TUESDAY, "Terça-feira");
+        DIAS_SEMANA_PT.put(DayOfWeek.WEDNESDAY, "Quarta-feira");
+        DIAS_SEMANA_PT.put(DayOfWeek.THURSDAY, "Quinta-feira");
+        DIAS_SEMANA_PT.put(DayOfWeek.FRIDAY, "Sexta-feira");
+        DIAS_SEMANA_PT.put(DayOfWeek.SATURDAY, "Sábado");
+        DIAS_SEMANA_PT.put(DayOfWeek.SUNDAY, "Domingo");
+    }
+
     private final MedicoService medicoService;
     private final EspecialidadeService especialidadeService;
+    private final HorarioTrabalhoMedicoService horarioService;
 
     @GetMapping
     public String listar(Model model) {
@@ -72,14 +94,58 @@ public class MedicoController {
 
         model.addAttribute("medico", request);
         adicionarAtributosDeEdicao(model, medico);
+        adicionarHorarios(model, id);
+        model.addAttribute("novoHorario", new CadastroHorarioTrabalhoRequest(null, null, null));
 
         return "admin/medicos/editar";
+    }
+
+    @PostMapping("/{id}/horarios")
+    public String adicionarHorario(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("novoHorario") CadastroHorarioTrabalhoRequest request,
+            BindingResult bindingResult,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            Medico medico = medicoService.buscarPorId(id);
+            model.addAttribute("medico", new AtualizarMedicoRequest(medico.getNome(), medico.getCrm(), medico.getEspecialidade().getId()));
+            adicionarAtributosDeEdicao(model, medico);
+            adicionarHorarios(model, id);
+            return "admin/medicos/editar";
+        }
+
+        try {
+            horarioService.adicionar(id, request);
+        } catch (MedicoNaoEncontradoException | HorarioInvalidoException | HorarioSobrepostoException e) {
+            redirectAttributes.addFlashAttribute("erroGeral", e.getMessage());
+            return "redirect:/admin/medicos/" + id + "/editar";
+        }
+
+        redirectAttributes.addFlashAttribute("sucesso", "Horário adicionado com sucesso.");
+        return "redirect:/admin/medicos/" + id + "/editar";
+    }
+
+    @PostMapping("/{id}/horarios/{horarioId}/remover")
+    public String removerHorario(@PathVariable Long id, @PathVariable Long horarioId, RedirectAttributes redirectAttributes) {
+        try {
+            horarioService.remover(id, horarioId);
+        } catch (HorarioNaoEncontradoException e) {
+            redirectAttributes.addFlashAttribute("erroGeral", e.getMessage());
+            return "redirect:/admin/medicos/" + id + "/editar";
+        }
+
+        redirectAttributes.addFlashAttribute("sucesso", "Horário removido com sucesso.");
+        return "redirect:/admin/medicos/" + id + "/editar";
     }
 
     @PostMapping("/{id}")
     public String atualizar(@PathVariable Long id, @Valid @ModelAttribute("medico") AtualizarMedicoRequest request, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             adicionarAtributosDeEdicao(model, medicoService.buscarPorId(id));
+            adicionarHorarios(model, id);
+            model.addAttribute("novoHorario", new CadastroHorarioTrabalhoRequest(null, null, null));
             return "admin/medicos/editar";
         }
 
@@ -105,5 +171,10 @@ public class MedicoController {
         model.addAttribute("medicoId", medico.getId());
         model.addAttribute("email", medico.getUser().getEmail());
         adicionarEspecialidades(model);
+    }
+
+    private void adicionarHorarios(Model model, Long medicoId) {
+        model.addAttribute("horarios", horarioService.listarPorMedico(medicoId));
+        model.addAttribute("diasSemanaPt", DIAS_SEMANA_PT);
     }
 }

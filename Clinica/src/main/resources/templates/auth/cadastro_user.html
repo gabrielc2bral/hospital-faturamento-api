@@ -7,13 +7,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
     <style>
         :root {
-            --ink: #1f2a24;
-            --sage: #3f6652;
-            --sage-dark: #2d4a3b;
-            --mist: #eef2ee;
-            --paper: #fbfaf7;
-            --line: #d8e0d9;
-            --error: #a8413a;
+            --ink: #3a3a4a;
+            --primary: #8b9aad;
+            --primary-light: #9db3c5;
+            --accent-mint: #7ecac0;
+            --mist: #f0f2f5;
+            --paper: #fafbfc;
+            --line: #d5dce5;
+            --error: #b55a5a;
         }
 
         body {
@@ -26,26 +27,26 @@
         .step-rail {
             font-size: 0.8rem;
             letter-spacing: 0.04em;
-            color: #6b7a70;
+            color: #7a6b8a;
             text-transform: uppercase;
         }
 
         .step-rail .step-current {
-            color: var(--sage-dark);
+            color: var(--primary);
             font-weight: 600;
         }
 
         .card-form {
-            background: var(--paper);
+            background: white;
             border: 1px solid var(--line);
-            border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(31, 42, 36, 0.06);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(44, 62, 80, 0.08);
         }
 
         .card-form .card-header {
-            background: var(--sage-dark);
-            color: var(--paper);
-            border-radius: 6px 6px 0 0;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 12px 12px 0 0;
             padding: 1.5rem 2rem 1.25rem;
         }
 
@@ -61,49 +62,53 @@
 
         .form-subtitle {
             font-size: 0.9rem;
-            opacity: 0.85;
+            opacity: 0.9;
         }
 
         label.form-label {
             font-weight: 600;
             font-size: 0.85rem;
-            color: var(--sage-dark);
+            color: var(--primary);
         }
 
         .form-control {
             border-color: var(--line);
+            border-radius: 8px;
             padding: 0.6rem 0.75rem;
         }
 
         .form-control:focus {
-            border-color: var(--sage);
-            box-shadow: 0 0 0 3px rgba(63, 102, 82, 0.15);
+            border-color: var(--accent-mint);
+            box-shadow: 0 0 0 3px rgba(126, 202, 192, 0.15);
         }
 
         .form-text {
             font-size: 0.78rem;
-            color: #6b7a70;
+            color: #7a6b8a;
         }
 
         .btn-cadastrar {
-            background-color: var(--sage-dark);
-            border-color: var(--sage-dark);
+            background-color: var(--primary);
+            border-color: var(--primary);
             padding: 0.65rem 1.5rem;
             font-weight: 600;
+            border-radius: 8px;
+            color: white;
         }
 
         .btn-cadastrar:hover {
-            background-color: var(--sage);
-            border-color: var(--sage);
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+            color: white;
         }
 
         .login-link {
             font-size: 0.9rem;
-            color: #6b7a70;
+            color: #7a6b8a;
         }
 
         .login-link a {
-            color: var(--sage-dark);
+            color: var(--primary);
             font-weight: 600;
             text-decoration: none;
         }
@@ -112,10 +117,15 @@
             text-decoration: underline;
         }
 
+        .btn-outline-secondary {
+            border-radius: 8px;
+        }
+
         /* Modal no mesmo tom da página */
         .modal-content {
             border: none;
-            border-radius: 6px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(44, 62, 80, 0.15);
         }
 
         .modal-header {
@@ -123,11 +133,11 @@
         }
 
         .modal-header.is-success {
-            background-color: #f0f5f1;
+            background-color: #eef6fb;
         }
 
         .modal-header.is-error {
-            background-color: #f7eceb;
+            background-color: #fdf0f0;
         }
 
         .modal-title {
